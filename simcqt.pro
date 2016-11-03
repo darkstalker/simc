@@ -8,7 +8,7 @@ CONFIG(qt) {
   TARGET = SimulationCraft
 
   QT += core gui network
-  
+
   lessThan( QT_MAJOR_VERSION, 5 ) {
     error( "SimulationCraft requires QT 5 or higher." )
   }
@@ -177,7 +177,7 @@ CONFIG(to_install) {
 unix:!mac {
   CONFIG(console)
   {
-  LIBS += -pthread
+  LIBS += -pthread -lcurl
   }
   DISTFILES += CHANGES \
                COPYING
@@ -218,7 +218,7 @@ unix:!mac {
   locale.files += locale/*.qm
   locale.commands = @echo Installing localizations to $$SHAREPATH/locale
 }
-  
+
 CONFIG(paperdoll) {
   DEFINES += SC_PAPERDOLL
   HEADERS += qt/sc_PaperDoll.hpp
