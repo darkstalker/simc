@@ -54,7 +54,7 @@ struct player_spec_t
 
 // download_id ==============================================================
 
-bool download_id( rapidjson::Document& d, 
+bool download_id( rapidjson::Document& d,
                   const std::string& region,
                   unsigned item_id,
                   std::string apikey,
@@ -836,7 +836,10 @@ player_t* parse_player( sim_t*             sim,
   else if ( player.local_json.empty() )
   {
     if ( ! http::get( result, player.url, player.cleanurl, caching ) )
+    {
+      sim -> errorf( "BCP API: Api request '%s' failed, falling back to html", player.cleanurl.c_str() );
       return nullptr;
+    }
   }
   else
   {
@@ -968,7 +971,7 @@ player_t* parse_player( sim_t*             sim,
 bool download_item_data( item_t& item, cache::behavior_e caching )
 {
   rapidjson::Document js;
-  if ( ! download_id( js, item.player -> region_str, item.parsed.data.id, item.sim -> apikey, caching ) || 
+  if ( ! download_id( js, item.player -> region_str, item.parsed.data.id, item.sim -> apikey, caching ) ||
        js.HasParseError() )
   {
     if ( caching != cache::ONLY )
@@ -1055,7 +1058,7 @@ bool download_item_data( item_t& item, cache::behavior_e caching )
         item.parsed.data.stat_type_e[ i ] = stat[ "stat" ].GetInt();
         item.parsed.data.stat_val[ i ] =  stat[ "amount" ].GetInt();
 
-        if ( js.HasMember( "weaponInfo" ) && 
+        if ( js.HasMember( "weaponInfo" ) &&
              ( item.parsed.data.stat_type_e[ i ] == ITEM_MOD_INTELLECT ||
                item.parsed.data.stat_type_e[ i ] == ITEM_MOD_SPIRIT ||
                item.parsed.data.stat_type_e[ i ] == ITEM_MOD_SPELL_POWER ) )
@@ -1364,7 +1367,7 @@ bool bcp_api::download_guild( sim_t* sim,
       continue;
 
     int rank = member[ "rank" ].GetInt();
-    if ( ( max_rank > 0 && rank > max_rank ) || 
+    if ( ( max_rank > 0 && rank > max_rank ) ||
          ( ! ranks.empty() && range::find( ranks, rank ) == ranks.end() ) )
       continue;
 
@@ -1392,7 +1395,7 @@ bool bcp_api::download_guild( sim_t* sim,
 
   for (auto & cname : names)
   {
-    
+
     std::cout << "Downloading character: " << cname << std::endl;
     download_player( sim, region, server, cname, "active", caching );
   }
